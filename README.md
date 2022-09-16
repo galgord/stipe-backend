@@ -3,7 +3,7 @@
 
 ## API Reference
 #### API URL
-```http
+```
 https://koombea-stripe-backend.herokuapp.com/
 ```
 
