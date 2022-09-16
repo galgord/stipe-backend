@@ -11,7 +11,7 @@ https://koombea-stripe-backend.herokuapp.com/
 #### Get Publishable Key
 
 ```http
-  GET /publishable-key
+GET /publishable-key
 ```
 
 return the Stripe publishable API_KEY that is used to init the Stripe Instancne
@@ -22,7 +22,7 @@ return the Stripe publishable API_KEY that is used to init the Stripe Instancne
 
 Gets the information for the credit card and creates and Id for it with Stripe
 ```http
-/create-payment-card
+POST /create-payment-card
 ```
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
@@ -36,7 +36,7 @@ Gets the information for the credit card and creates and Id for it with Stripe
 #### Create Customer with Credit Card
 
 ```http
-  POST /create-customer
+POST /create-customer
 ```
 **Before calling this method make sure to call the endpoint above to creaete a card.**
 | Parameter | Type     | Description                       |
