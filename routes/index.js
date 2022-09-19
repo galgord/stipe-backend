@@ -59,4 +59,55 @@ router.get('/customers', async (req, res) => {
   const customers = await stripe.customers.list();
   res.send({ customers });
 });
+router.get('/customers/:id', async (req, res) => {
+  const id = req.params.id;
+  const paymentMethods = await stripe.customers.listPaymentMethods(id, {
+    type: 'card',
+  });
+  res.send({ paymentMethods });
+});
+router.post('/customers/:id', async (req, res) => {
+  const id = req.params.id;
+  paymentMethodId = req.body.paymentMethod;
+  const paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
+    customer: id,
+  });
+  res.send({ paymentMethod });
+});
+
+router.get('/key/:id', async (req, res) => {
+  const id = req.params.id;
+  const ephemeralKey = await stripe.ephemeralKeys.create(
+    { customer: id },
+    { apiVersion: '2022-08-01' }
+  );
+  res.json(ephemeralKey);
+});
+
+router.post('/payment-sheet/:id', async (req, res) => {
+  const id = req.params.id;
+  // Use an existing Customer ID if this is a returning customer.
+  const ephemeralKey = await stripe.ephemeralKeys.create(
+    { customer: id },
+    { apiVersion: '2022-08-01' }
+  );
+  const setupIntent = await stripe.setupIntents.create({
+    customer: id,
+  });
+  res.json({
+    setupIntent: setupIntent.client_secret,
+    ephemeralKey: ephemeralKey.secret,
+    customer: id,
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
+  });
+});
+
+router.get('/customerByEmail/:email', async (req, res) => {
+  const email = req.params.email;
+  const customer = await stripe.customers.search({
+    query: `email:${email}`,
+  });
+  res.json(customer);
+});
+
 module.exports = router;
