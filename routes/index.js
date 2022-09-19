@@ -55,4 +55,8 @@ router.post('/create-payment-card', async (req, res) => {
   });
 });
 
+router.get('/customers', async (req, res) => {
+  const customers = await stripe.customers.list();
+  res.send({ customers });
+});
 module.exports = router;
