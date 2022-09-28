@@ -68,10 +68,9 @@ router.get('/customers/:id', async (req, res) => {
 });
 router.post('/customers/:id', async (req, res) => {
   const id = req.params.id;
-  const customer = await stripe.customers.create();
   paymentMethodId = req.body.paymentMethod;
   const paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
-    customer: id !== null ? id : customer.id
+    customer: id,
   });
   res.send({ paymentMethod });
 });
@@ -85,11 +84,14 @@ router.get('/key/:id', async (req, res) => {
   res.json(ephemeralKey);
 });
 
-router.post('/payment-sheet/:id', async (req, res) => {
+router.post('/payment-sheet/:id?', async (req, res) => {
   const id = req.params.id;
+  console.log(id);
   // Use an existing Customer ID if this is a returning customer.
+  const customer = await stripe.customers.create();
+
   const ephemeralKey = await stripe.ephemeralKeys.create(
-    { customer: id },
+    { customer: id !== undefined ? id : customer.id },
     { apiVersion: '2022-08-01' }
   );
   const setupIntent = await stripe.setupIntents.create({
